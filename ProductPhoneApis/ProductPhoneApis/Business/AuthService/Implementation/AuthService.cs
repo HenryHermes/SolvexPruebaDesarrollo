@@ -24,7 +24,7 @@ namespace ProductPhoneApis.Business.AuthService.Implementation
             List<Usuarios> usuarios = new List<Usuarios>() { };
             SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
             sqlConnection.Open();
-            SqlCommand cmd = new SqlCommand("GetUsuarios", sqlConnection);
+            SqlCommand cmd = new SqlCommand("Login_User", sqlConnection);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Username", form);
 
@@ -38,13 +38,14 @@ namespace ProductPhoneApis.Business.AuthService.Implementation
                 {
                     Usuarios usuario = new Usuarios
                     {
-                        ID_Usuarios = int.Parse(sqlDataReader["ID_Usuarios"].ToString()),
+                        ID_Usuarios = int.Parse(sqlDataReader["ID_Usuario"].ToString()),
                         Username = sqlDataReader["Username"].ToString(),
                         Nombre = sqlDataReader["Nombre"].ToString(),
                         Email = sqlDataReader["Email"].ToString(),
                         Contrase = sqlDataReader["Contrase"].ToString(),
                         Fecha_Ultima_Mod =DateTime.Parse( sqlDataReader["Fecha_Ultima_Mod"].ToString()),
-                        ID_Rol = int.Parse(sqlDataReader["ID_Rol"].ToString())
+                        ID_Rol = int.Parse(sqlDataReader["ID_Rol"].ToString()),
+                        Rol = sqlDataReader["Rol"].ToString()
                     };
 
                     usuarios.Add(usuario);

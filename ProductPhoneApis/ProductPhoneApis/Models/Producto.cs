@@ -11,6 +11,6 @@ namespace ProductPhoneApis.Models
         public double Precio { get; set; }
         public DateTime? Fecha_Ultima_Mod { get; set; }
         public int Cantidad { get; set; }
-        public BitArray image { get; set; }
+        public BitArray? image { get; set; }
     }
 }
