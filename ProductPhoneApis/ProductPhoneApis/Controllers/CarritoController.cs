@@ -75,6 +75,7 @@ namespace ProductPhoneApis.Controllers
                             ID_Color = int.Parse(sqlDataReader["ID_Color"].ToString()),
                             Color = sqlDataReader["Color"].ToString(),
                             Precio= double.Parse(sqlDataReader["Precio"].ToString()),
+                            Cantidad = int.Parse(sqlDataReader["Cantidad"].ToString())
                             //image = sqlDataReader["imagen"].ToString()
                         };
 
@@ -85,7 +86,9 @@ namespace ProductPhoneApis.Controllers
                 {
                     message = message + " " + e.Message;
                 }
+                sqlConnection.Close();
             }
+            
 
             return new
             {
@@ -259,7 +262,7 @@ namespace ProductPhoneApis.Controllers
 
         [HttpPost]
         [Route("InsertCarritosDetalle")]
-        public dynamic InsertCarritosDetalle(int ID_Carrito, int ID_Producto_Color, int ID_Color, long Cantidad, double Precio)
+        public dynamic InsertCarritosDetalle(int ID_Carrito, int ID_Producto, int ID_Color, long Cantidad, double Precio)
         {
             bool succeess = false;
             string message = "Error";
@@ -273,7 +276,7 @@ namespace ProductPhoneApis.Controllers
                 cmd.Transaction = cmdTransaction;
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@ID_Carrito", ID_Carrito);
-                cmd.Parameters.AddWithValue("@ID_Producto_Color", ID_Producto_Color);
+                cmd.Parameters.AddWithValue("@ID_Producto", ID_Producto);
                 cmd.Parameters.AddWithValue("@ID_Color", ID_Color);
                 cmd.Parameters.AddWithValue("@Cantidad", Cantidad);
                 cmd.Parameters.AddWithValue("@Precio", Precio);

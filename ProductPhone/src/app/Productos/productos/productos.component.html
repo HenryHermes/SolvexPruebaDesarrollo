@@ -1,0 +1,97 @@
+<app-nav-menu></app-nav-menu>
+
+<div class="d-flex justify-content-center bg-secondary-subtle">
+    <p class="m-3 align-self-center fs-4 fw-medium">Busqueda de productos</p>
+</div>
+
+<div class=" p-2 " >
+    <form class="d-flex justify-content-start gap-3" #ProdutcForm="ngForm" (ngSubmit)="traerProducto(ProdutcForm.value)">
+        <div class="mb-3 d-inline">
+            <input ngModel name="iD_Producto" type="number" class="form-control" placeholder="Id del Producto" min="1" pattern=""/>
+        </div>
+        <div class="mb-3 d-inline">
+          <input ngModel name="nombre" type="text" class="form-control" placeholder="Nombre Producto" >
+        </div>
+        <div class="mb-3 d-inline">
+          <input ngModel name="iD_Color" type="number" class="form-control" placeholder="Id del color" min="1">
+        </div>
+
+        <div class="mb-3 d-inline">
+            <input ngModel name="color" type="text" class="form-control" placeholder="Color Producto" >
+        </div>
+
+        <div class="mb-3 d-inline d-flex">
+            <div class=" d-inline">
+                <input ngModel name="precio1" type="number" id="typeNumber" class="form-control rounded-0 rounded-start" placeholder="Precio min" min="0"/>
+            </div>
+            <div class="d-inline">
+                <input ngModel name="precio2" type="number" id="typeNumber" class="form-control rounded-0 rounded-end" placeholder="Precio max" min="0"/>
+            </div>
+        </div>
+        
+        <div class="mb-3 d-inline d-flex">
+            <div class=" d-inline">
+                <input ngModel name="cantidad1" type="number" id="typeNumber" class="form-control rounded-0 rounded-start" placeholder="Cantidad min" />
+            </div>
+            <div class="d-inline">
+                <input ngModel name="cantidad2" type="number" id="typeNumber" class="form-control rounded-0 rounded-end" placeholder="Cantidad max" />
+            </div>
+            
+        </div>
+        <button type="submit" class="mb-3 w-auto h-auto d-inline btn btn-primary align-self-center">Submit</button>
+    </form>
+</div>
+
+<div>
+    <ul class="list-group list-group-flush">
+        <app-product-item *ngFor="let Product of ListaProductos | paginate: { itemsPerPage: 4, currentPage: PaginaActual }" [Product]="Product"></app-product-item>
+    </ul>
+    <pagination-controls (pageChange)="PaginaActual = $event"></pagination-controls>
+</div>
+
+<div class="d-flex justify-content-center bg-secondary-subtle">
+    <p class="m-3 align-self-center fs-4 fw-medium">Productos Generales</p>
+</div>
+
+<div class=" p-2 " >
+    <form class="d-flex justify-content-start gap-3" >
+        
+        <div class="mb-3 d-inline">
+          <input ngModel name="nombre" type="text" class="form-control" placeholder="Nombre Producto" [(ngModel)]="inputCategoria">
+        </div>
+        
+        <button type="submit" class="mb-3 w-auto h-auto d-inline btn btn-primary align-self-center" (click)="traerProductoCategoria(inputCategoria)">Submit</button>
+    </form>
+</div>
+
+<div>
+    <ul class="list-group list-group-flush">
+        <app-producto-categoria-items *ngFor="let ProductoCategoria of ListaProductosCategoria | paginate: { itemsPerPage: 2, currentPage: PaginaActualPC }" [ProductCategoria]="ProductoCategoria"></app-producto-categoria-items>
+        
+    </ul>
+    <pagination-controls (pageChange)="PaginaActualPC = $event"></pagination-controls>
+</div>
+
+<div *ngIf="role == '1'; then trueBlock"></div>
+
+<ng-template #trueBlock> 
+    <div class="d-flex justify-content-center bg-secondary-subtle">
+        <p class="m-3 align-self-center fs-4 fw-medium">Borrar Productos</p>
+    </div>
+    
+    <div class=" p-2 " >
+        <form class="d-flex justify-content-start gap-3" >
+            
+            <div class="mb-3 d-inline">
+              <input ngModel name="nombre" type="number" class="form-control" placeholder="ID De Producto" [(ngModel)]="inputDeleteIDProducto">
+            </div>
+            <div class="mb-3 d-inline">
+                <input ngModel name="nombre" type="number" class="form-control" placeholder="ID De Producto" [(ngModel)]="inputDeleteIDColor">
+            </div>
+            
+            <button type="submit" class="mb-3 w-auto h-auto d-inline btn btn-danger align-self-center" (click)="DeleteProducto(inputDeleteIDProducto,inputDeleteIDColor)">Submit</button>
+        </form>
+    </div>
+
+
+</ng-template>

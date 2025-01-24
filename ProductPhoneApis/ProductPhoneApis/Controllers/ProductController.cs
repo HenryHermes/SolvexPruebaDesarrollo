@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductPhoneApis.Models;
 using System.Collections;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ProductPhoneApis.Controllers
 {
@@ -16,7 +17,7 @@ namespace ProductPhoneApis.Controllers
         {
             _configuration = configuration;
         }
-        public Rol TraerPermisos(int ID)
+        private Rol TraerPermisos(int ID)
         {
             SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
             sqlConnection.Open();
@@ -29,15 +30,14 @@ namespace ProductPhoneApis.Controllers
             {
 
 
-                Rol Permisos = new Rol
+                while (sqlDataReader.Read())
                 {
-                    Ver = bool.Parse(sqlDataReader["Ver"].ToString()),
-                    Modificar = bool.Parse(sqlDataReader["Modificar"].ToString()),
-                    Crear = bool.Parse(sqlDataReader["Crear"].ToString()),
-                    Eliminar = bool.Parse(sqlDataReader["Eliminar"].ToString())
+                    rol.Ver = bool.Parse(sqlDataReader["Ver"].ToString());
+                    rol.Modificar = bool.Parse(sqlDataReader["Modificar"].ToString());
+                    rol.Crear = bool.Parse(sqlDataReader["Crear"].ToString());
+                    rol.Eliminar = bool.Parse(sqlDataReader["Eliminar"].ToString());
                 };
 
-                rol = Permisos;
 
             }
             catch (Exception e)
@@ -51,7 +51,7 @@ namespace ProductPhoneApis.Controllers
 
         [HttpPost]
         [Route("TraerProducto")]
-        public dynamic TraerUserios(TraerProductoForm form)
+        public dynamic TraerProductos(TraerProductoForm form)
         {
             bool succeess = false;
             string message = "Error";
@@ -113,12 +113,74 @@ namespace ProductPhoneApis.Controllers
         }
 
         [HttpPost]
-        [Route("InsertProducto")]
-        public dynamic InsertarProducto(string Nombre, int rol)
+        [Route("TraerProductoCategoria")]
+        public dynamic TraerProductosCategoria(string name="")
         {
             bool succeess = false;
             string message = "Error";
-            Rol permision = TraerPermisos(rol);
+            List<ProductCate> productos = new List<ProductCate>() { };
+            SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
+            sqlConnection.Open();
+            SqlCommand cmd = new SqlCommand("Traer_Producto_Categoria", sqlConnection);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Nombre", name);
+
+
+            SqlDataReader sqlDataReader = cmd.ExecuteReader();
+
+            try
+            {
+                succeess = true;
+                message = "OK";
+                while (sqlDataReader.Read())
+                {
+                    ProductCate producto = new ProductCate
+                    {
+                        ID_Producto = int.Parse(sqlDataReader["ID_Producto"].ToString()),
+                        Nombre = sqlDataReader["Nombre"].ToString(),
+                        Fecha_Ultima_Mod = DateTime.Parse(sqlDataReader["Fecha_Ultima_Mod"].ToString())
+                    };
+
+                    productos.Add(producto);
+                }
+            }
+            catch (Exception e)
+            {
+                message = message + " " + e.Message;
+            }
+
+            sqlConnection.Close();
+
+            return new
+            {
+                success = succeess,
+                message = message,
+                result = productos
+
+            };
+
+        }
+
+        [HttpPost]
+        [Route("InsertProducto")]
+        public dynamic InsertarProducto(string Nombre)
+        {
+
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+            
+
+            bool succeess = false;
+            string message = "Error";
+            Rol permision = TraerPermisos(role);
             if (permision.Crear==true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
@@ -157,11 +219,22 @@ namespace ProductPhoneApis.Controllers
 
         [HttpPost]
         [Route("UpdateProducto")]
-        public dynamic UpdateProducto(int ID, string Nombre, int rol)
+        public dynamic UpdateProducto(int ID, string Nombre)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permision = TraerPermisos(rol);
+            Rol permision = TraerPermisos(role);
             if (permision.Modificar == true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
@@ -202,11 +275,22 @@ namespace ProductPhoneApis.Controllers
         [Authorize(Roles ="1")]
         [HttpPost]
         [Route("DeleteProducto")]
-        public dynamic DeleteProducto(int ID_Producto, int ID_Color, int rol)
+        public dynamic DeleteProducto(int ID_Producto, int ID_Color)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permision = TraerPermisos(rol);
+            Rol permision = TraerPermisos(role);
             if (permision.Eliminar == true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
@@ -244,11 +328,22 @@ namespace ProductPhoneApis.Controllers
 
         [HttpPost]
         [Route("InsertProductoColor")]
-        public dynamic InsertarProductoColor(Producto Form, int rol)
+        public dynamic InsertarProductoColor(Producto Form)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permision = TraerPermisos(rol);
+            Rol permision = TraerPermisos(role);
             if (permision.Crear == true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
@@ -291,11 +386,22 @@ namespace ProductPhoneApis.Controllers
 
         [HttpPost]
         [Route("UpdateProductoColor")]
-        public dynamic UpdateProductoColor(Producto Form, int rol)
+        public dynamic UpdateProductoColor(Producto Form)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permision = TraerPermisos(rol);
+            Rol permision = TraerPermisos(role);
             if (permision.Modificar == true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);

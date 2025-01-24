@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductPhoneApis.Models;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ProductPhoneApis.Controllers
 {
@@ -17,7 +18,9 @@ namespace ProductPhoneApis.Controllers
             _configuration = configuration;
         }
 
-        public Rol TraerPermisos(int ID)
+    
+
+        private Rol TraerPermisos(int ID)
         {
             SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
             sqlConnection.Open();
@@ -96,11 +99,22 @@ namespace ProductPhoneApis.Controllers
         
         [HttpPost]
         [Route("InsertarColor")]
-        public dynamic InsertarColor(string Nombre,int Rol)
+        public dynamic InsertarColor(string Nombre)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permisos = TraerPermisos(Rol);
+            Rol permisos = TraerPermisos(role);
             if (permisos.Crear==true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);
@@ -139,11 +153,22 @@ namespace ProductPhoneApis.Controllers
         
         [HttpPost]
         [Route("UpdateColor")]
-        public dynamic UpdateColor(Colors color, int rol)
+        public dynamic UpdateColor(Colors color)
         {
+            string token = Request.Headers["Authorization"];
+
+            if (token.StartsWith("Bearer"))
+            {
+                token = token.Substring("Bearer ".Length).Trim();
+            }
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken jwt = handler.ReadJwtToken(token);
+            int role = int.Parse(jwt.Claims.ElementAt(1).Value);
+
             bool succeess = false;
             string message = "Error";
-            Rol permisos = TraerPermisos(rol);
+            Rol permisos = TraerPermisos(role);
             if (permisos.Modificar == true)
             {
                 SqlConnection sqlConnection = new SqlConnection(_configuration["ConnectionString"]);

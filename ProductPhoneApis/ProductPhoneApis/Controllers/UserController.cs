@@ -29,7 +29,7 @@ namespace ProductPhoneApis.Controllers
             sqlConnection.Open();
             SqlCommand cmd = new SqlCommand("Traer_Users", sqlConnection);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@ID_Usuarios", form.ID_Usuario);
+            cmd.Parameters.AddWithValue("@ID_Usuario", form.ID_Usuario);
             cmd.Parameters.AddWithValue("@Username", form.Username);
             cmd.Parameters.AddWithValue("@Nombre", form.Nombre);
             cmd.Parameters.AddWithValue("@Email", form.Email);
@@ -142,9 +142,9 @@ namespace ProductPhoneApis.Controllers
                     cmd.Parameters.AddWithValue("@Username", form.Username);
                     cmd.Parameters.AddWithValue("@Nombre", form.Nombre);
                     cmd.Parameters.AddWithValue("@Email", form.Email);
-                    cmd.Parameters.AddWithValue("@Constrase", BCrypt.Net.BCrypt.HashPassword(form.Contrase));
-                    cmd.Parameters.AddWithValue("@Fecha_Ultima_Mod", form.Fecha_Ultima_Mod);
-                    cmd.Parameters.AddWithValue("@Rol", form.Rol);
+                    cmd.Parameters.AddWithValue("@Contrase", BCrypt.Net.BCrypt.HashPassword(form.Contrase));
+                    cmd.Parameters.AddWithValue("@Fecha_Ultima_Mod", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@ID_Rol", form.ID_Rol);
                     cmd.ExecuteNonQuery();
                     cmdTransaction.Commit();
                     message = "OK";
@@ -235,7 +235,7 @@ namespace ProductPhoneApis.Controllers
                     cmd.Parameters.AddWithValue("@Nombre", form.Nombre);
                     cmd.Parameters.AddWithValue("@Email", form.Email);
                     cmd.Parameters.AddWithValue("@Constrase", BCrypt.Net.BCrypt.HashPassword(form.Contrase));
-                    cmd.Parameters.AddWithValue("@Fecha_Ultima_Mod", form.Fecha_Ultima_Mod);
+                    cmd.Parameters.AddWithValue("@Fecha_Ultima_Mod", DateTime.Now);
                     cmd.Parameters.AddWithValue("@Rol", form.Rol);
                     cmd.ExecuteNonQuery();
                     cmdTransaction.Commit();

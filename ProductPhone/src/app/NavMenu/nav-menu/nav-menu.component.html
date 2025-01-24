@@ -1,0 +1,20 @@
+<div class="dropdown position-absolute top-0 end-0 p-3">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-list"></i>
+    </button>
+    <div *ngIf="role == '1'; then trueBlock; else falseBlock"></div>
+    <ng-template class="dropdown-item" #trueBlock>
+        <ul class="dropdown-menu">
+        <li><button class="dropdown-item" type="button"  (click)="ChangePageProducto()">Productos</button></li>
+        <li><button class="dropdown-item" type="button" (click)="ChangePageCrearProducto()">Gestion Productos</button></li>       
+        <li><button class="dropdown-item" type="button" (click)="ChangePageUsuario()" #trueBlock>Usuarios</button></li>
+        <li><button class="dropdown-item" type="button" (click)="ChangePageCrearUsuario()" #trueBlock>Gestion Usuarios</button></li>
+       </ul>
+    </ng-template>
+    <ng-template class="dropdown-item" #falseBlock>
+        <ul class="dropdown-menu">
+        <li><button class="dropdown-item" type="button"  (click)="ChangePageProducto()">Productos</button></li>
+        <li><button class="dropdown-item" type="button" (click)="ChangePageCrearProducto()">Gestion Productos</button></li> 
+        </ul>
+    </ng-template>
+</div>

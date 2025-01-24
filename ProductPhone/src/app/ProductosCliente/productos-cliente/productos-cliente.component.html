@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center bg-secondary-subtle">
+    <p class="m-3 align-self-center fs-4 fw-medium">Busqueda de productos</p>
+</div>
+
+<div class=" p-2 " >
+    <form class="d-flex justify-content-start gap-3" #ProdutcForm="ngForm" (ngSubmit)="traerProducto(ProdutcForm.value)">
+        <div class="mb-3 d-inline">
+            <input ngModel name="iD_Producto" type="number" class="form-control" placeholder="Id del Producto" min="1" pattern=""/>
+        </div>
+        <div class="mb-3 d-inline">
+          <input ngModel name="nombre" type="text" class="form-control" placeholder="Nombre Producto" >
+        </div>
+        <div class="mb-3 d-inline">
+          <input ngModel name="iD_Color" type="number" class="form-control" placeholder="Id del color" min="1">
+        </div>
+
+        <div class="mb-3 d-inline">
+            <input ngModel name="color" type="text" class="form-control" placeholder="Color Producto" >
+        </div>
+
+        <div class="mb-3 d-inline d-flex">
+            <div class=" d-inline">
+                <input ngModel name="precio1" type="number" id="typeNumber" class="form-control rounded-0 rounded-start" placeholder="Precio min" min="0"/>
+            </div>
+            <div class="d-inline">
+                <input ngModel name="precio2" type="number" id="typeNumber" class="form-control rounded-0 rounded-end" placeholder="Precio max" min="0"/>
+            </div>
+        </div>
+        
+        <div class="mb-3 d-inline d-flex">
+            <div class=" d-inline">
+                <input ngModel name="cantidad1" type="number" id="typeNumber" class="form-control rounded-0 rounded-start" placeholder="Cantidad min" />
+            </div>
+            <div class="d-inline">
+                <input ngModel name="cantidad2" type="number" id="typeNumber" class="form-control rounded-0 rounded-end" placeholder="Cantidad max" />
+            </div>
+            
+        </div>
+        <button type="submit" class="mb-3 w-auto h-auto d-inline btn btn-primary align-self-center">Submit</button>
+    </form>
+</div>
+
+<div>
+    <ul class="list-group list-group-flush">
+        <app-product-item *ngFor="let Product of ListaProductos | paginate: { itemsPerPage: 20, currentPage: PaginaActual }" [Product]="Product"></app-product-item>
+    </ul>
+    <pagination-controls (pageChange)="PaginaActual = $event"></pagination-controls>
+</div>
